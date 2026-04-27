@@ -2,9 +2,12 @@
 
 D++ is a lightweight experimental language with a native C++ interpreter.
 
+Latest release: `v0.1.1` ([release notes](docs/release-notes-v0.1.1.md))
+
 Documentation:
 
 - [Developer Guide](docs/developer-guide.md)
+- [Changelog](CHANGELOG.md)
 
 ## Build
 
