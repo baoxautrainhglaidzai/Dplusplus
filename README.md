@@ -1,87 +1,38 @@
 # D++
 
-D++ is a small, experimental programming language designed to be easy to read, easy to parse, and easy to extend.
+D++ is a small, experimental programming language for learning interpreter design, testing language ideas, and building automation-friendly tooling.
 
-The project is a practical sandbox for language design, interpreters, tooling, and AI-assisted code generation. It is not intended to replace production languages. The focus is clarity, minimal syntax, and fast experimentation.
+The language is intentionally minimal: readable syntax, simple runtime rules, and a codebase that stays easy to parse and extend.
 
-## Purpose
+Current release: `v0.2.1`
 
-D++ is built for:
+## What D++ Is For
 
-- learning how lexers, parsers, and interpreters work
-- testing language ideas without large compiler complexity
-- building simple tooling around a predictable syntax
-- exploring AI-friendly code generation and transformation
+- learning how lexers, parsers, and interpreters fit together
+- experimenting with small language features without compiler-heavy infrastructure
+- building predictable examples for tooling and AI-assisted code generation
 
-## Runtime Model
+## Runtime Layout
 
 - **Main runtime:** native C++20 implementation in `src/` and `include/`
 - **Reference runtime:** Python implementation in `reference/python/dpp_reference/`
 
-The C++ runtime is the primary executable and the main tested target. The Python runtime is a reference implementation for the core language surface and may lag newer native features.
+The C++ runtime is the primary executable and the main tested target. The Python runtime is a smaller reference implementation for the core language surface.
 
-## Key Features
+## Quick Start
 
-- minimal syntax with dynamic variables and explicit blocks
-- functions with closures and `return`
-- conditionals with `if`, `else if`, and `else`
-- loops with `for`, `while`, `break`, and `continue`
-- arithmetic, comparison, modulo, and short-circuit logical operators
-- mutable lists with indexing and indexed assignment
-- small built-in library: `input`, `sqrt`, `random`, `len`, `push`, `pop`
-
-## Project Structure
-
-```text
-.
-├── src/                      # Main C++ runtime implementation
-├── include/dpp/             # Public headers, AST, tokens, values
-├── tests/                   # Native regression tests
-├── examples/                # Example D++ programs
-├── docs/                    # Developer-facing repository documentation
-├── reference/python/        # Python reference runtime package
-├── Makefile                 # Build, test, install, clean
-├── README.md
-└── CHANGELOG.md
-```
-
-## Installation and Build
-
-### C++ Runtime
-
-Requirements:
-
-- C++20 compiler (`clang++` or `g++`)
-- `make`
-
-Build:
+### Build and run the native runtime
 
 ```sh
 make
-```
-
-Test:
-
-```sh
 make test
-```
-
-Run directly:
-
-```sh
 ./build/dpp examples/systems_demo.dpp
 ```
 
-Install locally:
+Install it locally:
 
 ```sh
 make install PREFIX=$HOME/.local
-```
-
-If `$HOME/.local/bin` is on your `PATH`, you can then run:
-
-```sh
-dpp examples/moonlit_tea_party.dpp
 ```
 
 Termux install example:
@@ -90,40 +41,22 @@ Termux install example:
 make install PREFIX=$PREFIX
 ```
 
-### Python Reference Runtime
-
-Requirements:
-
-- Python 3.10+
-- `pip`
-
-Scope:
-
-- supports the core D++ feature set from the original interpreter design
-- useful for experimentation and behavior reference
-- advanced native features may arrive in C++ first
-
-Install in editable mode:
+### Run the Python reference runtime
 
 ```sh
 python -m pip install -e reference/python
-```
-
-Run after installation:
-
-```sh
 dpp-reference examples/core_basics.dpp
 ```
 
-Run without installation:
+Or without installation:
 
 ```sh
 PYTHONPATH=reference/python python -m dpp_reference examples/core_basics.dpp
 ```
 
-## Usage Examples
+## Language Snapshot
 
-### Functions and arithmetic
+Shared core example:
 
 ```dpp
 let x = 5
@@ -133,80 +66,75 @@ fn multiply(a, b) {
     return a * b
 }
 
-print multiply(x, y)
+let result = multiply(x, y)
+
+if result > 20 {
+    print "big"
+} else {
+    print "small"
+}
+
+for i in 1..3 {
+    print i
+}
+
+print result
 ```
 
-### Lists and loops
+Native runtime extensions:
 
 ```dpp
 let values = [1, 2, 3]
 push(values, 4)
 
-for i in 0..3 {
-    print values[i]
+while len(values) > 0 {
+    print pop(values)
 }
 ```
 
-### While + control flow
+## Features
 
-```dpp
-let i = 0
+- dynamic variables and explicit block syntax
+- functions with closures and `return`
+- `if`, `else if`, and `else`
+- `for`, `while`, `break`, and `continue`
+- arithmetic, comparison, modulo, and logical operators
+- list literals, indexing, and indexed assignment
+- built-ins: `input`, `sqrt`, `random`, `len`, `push`, `pop`
 
-while i < 10 {
-    i = i + 1
+## Repository Structure
 
-    if i % 2 == 0 {
-        continue
-    }
-
-    if i > 7 {
-        break
-    }
-
-    print i
-}
+```text
+src/                   main C++ runtime
+include/dpp/           native headers, AST, tokens, values
+reference/python/      Python reference runtime package
+examples/              example D++ programs
+tests/                 native regression tests
+docs/                  technical and contributor documentation
 ```
 
-## Included Examples
+## Examples
 
-- `examples/core_basics.dpp` - shared core-language example for both runtimes
-- `examples/treasure_cave.dpp` - interactive text adventure using the core language
-- `examples/moonlit_tea_party.dpp` - native-focused showcase game
-- `examples/systems_demo.dpp` - native-focused advanced feature demo
+- `examples/core_basics.dpp` runs in both runtimes
+- `examples/treasure_cave.dpp` is a core-language text adventure
+- `examples/moonlit_tea_party.dpp` showcases the native runtime
+- `examples/systems_demo.dpp` exercises advanced native features
 
 ## Documentation
 
-- `CHANGELOG.md`
-- `docs/developer-guide.md`
+- `README.md` gives the project overview and quick start
+- `docs/developer-guide.md` covers build details, architecture, and contributor workflow
+- `CHANGELOG.md` tracks release history
 
 ## Roadmap
 
 - module/import support
-- maps or dictionaries
+- dictionary-style data structures
 - expanded standard library
 - REPL workflow
 - bytecode or VM backend
-- cross-runtime conformance testing between C++ and Python
+- stronger cross-runtime conformance coverage
 
 ## Contributing
 
-Contributions should keep D++ small, explicit, and easy to understand.
-
-Guidelines:
-
-- prefer minimal syntax over clever syntax
-- keep runtime behavior easy to reason about
-- update tests when language behavior changes
-- update docs when setup, layout, or features change
-- do not commit generated files or build outputs
-
-Recommended contributor flow:
-
-```sh
-make test
-git status
-```
-
-## Release
-
-Current release: `v0.2.1`
+Keep changes small, explicit, and testable. Run `make test` when the native runtime or language behavior changes, and keep README and docs aligned with the current repository layout.

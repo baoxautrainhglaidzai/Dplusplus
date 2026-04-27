@@ -1,6 +1,12 @@
 # D++ Developer Guide
 
-This guide is for contributors and tool builders working on the D++ repository itself.
+This guide covers the technical structure of the D++ repository for `v0.2.1`.
+
+## Documentation Boundaries
+
+- `README.md` is the user-facing overview and quick start.
+- `docs/` contains technical repository details and contributor guidance.
+- `AGENTS.md` is reserved for AI/agent operating rules.
 
 ## Runtime Roles
 
@@ -19,7 +25,7 @@ This guide is for contributors and tool builders working on the D++ repository i
 - `docs/` developer-facing repository documentation
 - `reference/python/` Python reference package and packaging metadata
 
-## Build and Test
+## Native Build, Test, and Install
 
 Build the native runtime:
 
@@ -39,7 +45,26 @@ Install the native runtime:
 make install PREFIX=$HOME/.local
 ```
 
+Key native entrypoints:
+
+- `src/lexer.cpp`
+- `src/parser.cpp`
+- `src/interpreter.cpp`
+- `src/runtime.cpp`
+- `src/main.cpp`
+
 ## Python Reference Runtime
+
+The Python runtime is a reference implementation for the core language surface:
+
+- variables and assignment
+- functions and `return`
+- conditionals
+- `for` loops
+- arithmetic and comparison
+- `print`, `input`, `sqrt`, and `random`
+
+It is intentionally not the primary runtime, and advanced native features may arrive there first.
 
 Install the Python reference runtime in editable mode:
 
@@ -73,10 +98,6 @@ Main code references:
 - `include/dpp/token.hpp`
 - `include/dpp/ast.hpp`
 - `include/dpp/value.hpp`
-- `src/lexer.cpp`
-- `src/parser.cpp`
-- `src/interpreter.cpp`
-- `src/runtime.cpp`
 
 ## Contributor Workflow
 
@@ -86,7 +107,7 @@ When changing the language:
 2. Update AST nodes if the feature needs new structure.
 3. Update the parser and interpreter together.
 4. Extend `tests/test_dpp.cpp`.
-5. Update `README.md`, `CHANGELOG.md`, and release notes if behavior changes.
+5. Update `README.md`, `CHANGELOG.md`, and any affected technical docs.
 
 Keep changes:
 
@@ -100,9 +121,10 @@ Keep changes:
 Before cutting a release:
 
 1. Run `make test`.
-2. Confirm generated files are ignored.
-3. Update `README.md` if setup or usage changed.
-4. Update `CHANGELOG.md`.
+2. Smoke-test documented examples that represent the current feature set.
+3. Confirm generated files are ignored.
+4. Update `README.md` if setup or usage changed.
+5. Update `CHANGELOG.md`.
 
 ## Scope Notes
 

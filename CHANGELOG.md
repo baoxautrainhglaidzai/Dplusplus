@@ -13,10 +13,12 @@ No unreleased changes yet.
 - Standardized the repository layout to make the native C++ runtime the clear primary implementation.
 - Moved the Python runtime into `reference/python/dpp_reference` and documented it as a reference implementation.
 - Clarified that the Python runtime targets the core D++ feature set and may lag native-only extensions.
-- Rewrote `README.md` with clearer project purpose, setup, usage, structure, roadmap, and contributing guidance.
-- Reworked the developer guide to focus on architecture and contributor workflow.
+- Rewrote `README.md` as the user-facing overview, quick start, and usage guide.
+- Reworked `docs/developer-guide.md` as the detailed technical and contributor guide.
+- Reduced documentation duplication by limiting `AGENTS.md` to repository instructions for AI agents.
 - Added editable-install packaging for the Python reference runtime.
 - Added `make install` and `make clean` targets for the native runtime.
+- Added regression coverage for the shared `examples/core_basics.dpp` example.
 
 ### Removed
 

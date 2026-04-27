@@ -1,10 +1,10 @@
 # D++ Python Reference Runtime
 
-This directory contains the Python reference implementation of D++.
+Python reference runtime for D++ `v0.2.1`.
 
-It is not the primary runtime. The main runtime is the native C++20 interpreter in the repository root.
+This package is not the primary runtime. The main implementation is the native C++20 interpreter in the repository root.
 
-The Python runtime focuses on the core language surface: variables, functions, conditionals, `for` loops, arithmetic, `print`, `input`, `sqrt`, and `random`. Advanced features may appear in the native runtime first.
+The Python runtime focuses on the core language surface: variables, functions, conditionals, `for` loops, arithmetic, `print`, `input`, `sqrt`, and `random`. Native-only extensions may appear in C++ first.
 
 ## Install
 

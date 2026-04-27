@@ -203,6 +203,13 @@ void testSystemsDemoExample() {
         "systems demo example");
 }
 
+void testCoreBasicsExample() {
+    expectEqual(
+        runProgram(readFile("examples/core_basics.dpp")),
+        "big\n1\n2\n3\n50",
+        "core basics example");
+}
+
 void testWhileBreakContinueAndModulo() {
     expectEqual(
         runProgram(R"(
@@ -321,6 +328,7 @@ int main() {
         testReturnOutsideFunction();
         testMoonlitTeaPartyExample();
         testSystemsDemoExample();
+        testCoreBasicsExample();
         testWhileBreakContinueAndModulo();
         testListsAndIndexAssignments();
         testLogicalOperatorsShortCircuit();
