@@ -1,0 +1,77 @@
+print "=== Moonlit Tea Party ==="
+print "A shy fox is hosting a tea party for three starry guests."
+print "Help the fox make the forest feel warm and welcome."
+
+let joy = 0
+let has_honey = false
+
+for lantern in 1..3 {
+    print "Lantern " + lantern + " is glowing."
+}
+
+fn pantry() {
+    print "Pantry: choose honey or mint."
+    let choice = input()
+
+    if choice == "honey" {
+        print "Golden honey joins the table."
+        has_honey = true
+        joy = joy + 1
+    } else {
+        print "Fresh mint fills the air with a cool breeze."
+        joy = joy + 1
+    }
+}
+
+fn welcome() {
+    print "Welcome: choose sing or smile."
+    let choice = input()
+
+    if choice == "sing" {
+        print "The guests clap along to your moon song."
+        joy = joy + 2
+    } else {
+        print "Your gentle smile calms every little star."
+        joy = joy + 1
+    }
+}
+
+fn serve() {
+    print "Serve: choose pour or wave."
+    let choice = input()
+
+    if has_honey {
+        if choice == "pour" {
+            print "Honey tea sparkles in every cup."
+            joy = joy + 2
+        } else {
+            print "You wave at the guests and save the tea for later."
+        }
+    } else {
+        if choice == "pour" {
+            print "Mint tea swirls with silver steam."
+            joy = joy + 1
+        } else {
+            print "The guests enjoy the quiet moment together."
+        }
+    }
+}
+
+fn ending() {
+    print "Tea party joy: " + joy
+
+    if joy >= 5 {
+        print "Ending: The fox becomes the most beloved host in the forest."
+    } else {
+        if joy >= 3 {
+            print "Ending: The guests promise to visit again tomorrow."
+        } else {
+            print "Ending: The fox learns, laughs, and plans a brighter party."
+        }
+    }
+}
+
+pantry()
+welcome()
+serve()
+ending()

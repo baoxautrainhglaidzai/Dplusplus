@@ -1,0 +1,75 @@
+// Treasure Cave is a small text adventure written in D++.
+
+print "=== Treasure Cave ==="
+print "Reach the treasure room with the best score."
+print "Choices are case-sensitive."
+print "Lantern check"
+
+for turn in 3..1 {
+    print turn
+}
+
+let score = 0
+let has_key = false
+
+fn first_room() {
+    print "Room 1: inspect torch or moss?"
+    let choice = input()
+
+    if choice == "torch" {
+        print "You find a brass key."
+        has_key = true
+        score = score + 1
+    } else {
+        print "The moss is damp and empty."
+    }
+}
+
+fn second_room() {
+    print "Room 2: walk or listen?"
+    let choice = input()
+
+    if choice == "listen" {
+        print "A whisper warns you about a weak stone."
+        score = score + 1
+    } else {
+        print "You stumble but keep moving."
+    }
+}
+
+fn treasure_room() {
+    print "Room 3: use the key or leave?"
+
+    if has_key {
+        let choice = input()
+
+        if choice == "use" {
+            print "The chest opens."
+            score = score + 2
+        } else {
+            print "You leave the treasure behind."
+        }
+    } else {
+        print "The gate stays locked."
+    }
+}
+
+fn ending() {
+    print "Final score"
+    print score
+
+    if score >= 4 {
+        print "Victory: You leave Treasure Cave rich."
+    } else {
+        if score >= 2 {
+            print "You escape with a few relics."
+        } else {
+            print "You make it out empty-handed."
+        }
+    }
+}
+
+first_room()
+second_room()
+treasure_room()
+ending()
