@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dpp-reference"
+version = "0.2.1"
+description = "Python reference runtime for the D++ language"
+readme = "README.md"
+requires-python = ">=3.10"
+
+[project.scripts]
+dpp-reference = "dpp_reference.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["dpp_reference*"]

@@ -1,12 +1,14 @@
 CXX ?= clang++
 CXXFLAGS ?= -std=c++20 -Wall -Wextra -Wpedantic -O2 -Iinclude
+PREFIX ?= /usr/local
+BINDIR ?= $(PREFIX)/bin
 
 BUILD_DIR := build
 CORE_SOURCES := src/lexer.cpp src/parser.cpp src/interpreter.cpp src/runtime.cpp
 APP_SOURCES := $(CORE_SOURCES) src/main.cpp
 TEST_SOURCES := $(CORE_SOURCES) tests/test_dpp.cpp
 
-.PHONY: all test
+.PHONY: all test install clean
 
 all: $(BUILD_DIR)/dpp
 
@@ -21,3 +23,10 @@ $(BUILD_DIR)/test_dpp: $(TEST_SOURCES) | $(BUILD_DIR)
 
 test: $(BUILD_DIR)/test_dpp
 	./$(BUILD_DIR)/test_dpp
+
+install: $(BUILD_DIR)/dpp
+	mkdir -p $(DESTDIR)$(BINDIR)
+	install -m 755 $(BUILD_DIR)/dpp $(DESTDIR)$(BINDIR)/dpp
+
+clean:
+	rm -rf $(BUILD_DIR)

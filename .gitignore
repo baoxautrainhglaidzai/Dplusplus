@@ -1,4 +1,12 @@
 build/
+dist/
 .remote-inspect/
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/

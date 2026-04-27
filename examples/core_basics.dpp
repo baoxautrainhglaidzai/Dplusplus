@@ -1,0 +1,22 @@
+// Core language example supported by both D++ runtimes.
+
+let x = 5
+let y = 10
+
+fn multiply(a, b) {
+    return a * b
+}
+
+let result = multiply(x, y)
+
+if result > 20 {
+    print "big"
+} else {
+    print "small"
+}
+
+for i in 1..3 {
+    print i
+}
+
+print result

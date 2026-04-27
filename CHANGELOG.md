@@ -4,7 +4,24 @@ All notable changes to D++ are documented in this file.
 
 ## [Unreleased]
 
-TBD
+No unreleased changes yet.
+
+## [v0.2.1] - 2026-04-27
+
+### Changed
+
+- Standardized the repository layout to make the native C++ runtime the clear primary implementation.
+- Moved the Python runtime into `reference/python/dpp_reference` and documented it as a reference implementation.
+- Clarified that the Python runtime targets the core D++ feature set and may lag native-only extensions.
+- Rewrote `README.md` with clearer project purpose, setup, usage, structure, roadmap, and contributing guidance.
+- Reworked the developer guide to focus on architecture and contributor workflow.
+- Added editable-install packaging for the Python reference runtime.
+- Added `make install` and `make clean` targets for the native runtime.
+
+### Removed
+
+- Tracked Python bytecode and other generated artifacts from version control.
+- Redundant per-version release-note documents that duplicated the changelog.
 
 ## [v0.2.0] - 2026-04-27
 
