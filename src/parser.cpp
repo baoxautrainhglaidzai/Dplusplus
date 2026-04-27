@@ -28,17 +28,23 @@ ast::StmtPtr Parser::statement() {
     if (match({TokenType::If})) {
         return ifStatement();
     }
+    if (match({TokenType::While})) {
+        return whileStatement();
+    }
     if (match({TokenType::For})) {
         return forStatement();
+    }
+    if (match({TokenType::Break})) {
+        return breakStatement();
+    }
+    if (match({TokenType::Continue})) {
+        return continueStatement();
     }
     if (match({TokenType::Return})) {
         return returnStatement();
     }
     if (match({TokenType::Print})) {
         return printStatement();
-    }
-    if (check(TokenType::Identifier) && checkNext(TokenType::Assign)) {
-        return assignment();
     }
     return expressionStatement();
 }
@@ -47,12 +53,6 @@ ast::StmtPtr Parser::varDeclaration() {
     const Token& name = consume(TokenType::Identifier, "Expected variable name.");
     consume(TokenType::Assign, "Expected '=' after variable name.");
     return std::make_unique<ast::VarDeclaration>(name.lexeme, expression(), name.line);
-}
-
-ast::StmtPtr Parser::assignment() {
-    const Token& name = consume(TokenType::Identifier, "Expected variable name.");
-    consume(TokenType::Assign, "Expected '=' after variable name.");
-    return std::make_unique<ast::Assignment>(name.lexeme, expression(), name.line);
 }
 
 ast::StmtPtr Parser::functionDeclaration() {
@@ -89,6 +89,12 @@ ast::StmtPtr Parser::ifStatement() {
     return std::make_unique<ast::IfStatement>(std::move(condition), std::move(thenBranch), std::move(elseBranch), keyword.line);
 }
 
+ast::StmtPtr Parser::whileStatement() {
+    const Token keyword = previous();
+    auto condition = expression();
+    return std::make_unique<ast::WhileStatement>(std::move(condition), block(), keyword.line);
+}
+
 ast::StmtPtr Parser::forStatement() {
     const Token keyword = previous();
     const Token& iterator = consume(TokenType::Identifier, "Expected loop variable name.");
@@ -97,6 +103,14 @@ ast::StmtPtr Parser::forStatement() {
     consume(TokenType::Range, "Expected '..' in for loop range.");
     auto end = expression();
     return std::make_unique<ast::ForStatement>(iterator.lexeme, std::move(start), std::move(end), block(), keyword.line);
+}
+
+ast::StmtPtr Parser::breakStatement() {
+    return std::make_unique<ast::BreakStatement>(previous().line);
+}
+
+ast::StmtPtr Parser::continueStatement() {
+    return std::make_unique<ast::ContinueStatement>(previous().line);
 }
 
 ast::StmtPtr Parser::returnStatement() {
@@ -138,7 +152,55 @@ std::vector<ast::StmtPtr> Parser::block() {
 }
 
 ast::ExprPtr Parser::expression() {
-    return equality();
+    return assignment();
+}
+
+ast::ExprPtr Parser::assignment() {
+    auto expr = logicalOr();
+
+    if (!match({TokenType::Assign})) {
+        return expr;
+    }
+
+    const Token equals = previous();
+    auto value = assignment();
+
+    if (const auto* variable = dynamic_cast<ast::Variable*>(expr.get())) {
+        return std::make_unique<ast::AssignExpression>(variable->name, std::move(value), equals.line);
+    }
+
+    if (dynamic_cast<ast::IndexAccess*>(expr.get()) != nullptr) {
+        auto access = std::unique_ptr<ast::IndexAccess>(static_cast<ast::IndexAccess*>(expr.release()));
+        return std::make_unique<ast::IndexAssignExpression>(
+            std::move(access->target),
+            std::move(access->index),
+            std::move(value),
+            equals.line);
+    }
+
+    error(equals, "Invalid assignment target.");
+}
+
+ast::ExprPtr Parser::logicalOr() {
+    auto expr = logicalAnd();
+
+    while (match({TokenType::Or})) {
+        const Token op = previous();
+        expr = std::make_unique<ast::Logical>(std::move(expr), op.lexeme, logicalAnd(), op.line);
+    }
+
+    return expr;
+}
+
+ast::ExprPtr Parser::logicalAnd() {
+    auto expr = equality();
+
+    while (match({TokenType::And})) {
+        const Token op = previous();
+        expr = std::make_unique<ast::Logical>(std::move(expr), op.lexeme, equality(), op.line);
+    }
+
+    return expr;
 }
 
 ast::ExprPtr Parser::equality() {
@@ -177,7 +239,7 @@ ast::ExprPtr Parser::term() {
 ast::ExprPtr Parser::factor() {
     auto expr = unary();
 
-    while (match({TokenType::Star, TokenType::Slash})) {
+    while (match({TokenType::Star, TokenType::Slash, TokenType::Percent})) {
         const Token op = previous();
         expr = std::make_unique<ast::Binary>(std::move(expr), op.lexeme, unary(), op.line);
     }
@@ -186,7 +248,7 @@ ast::ExprPtr Parser::factor() {
 }
 
 ast::ExprPtr Parser::unary() {
-    if (match({TokenType::Minus})) {
+    if (match({TokenType::Minus, TokenType::Bang})) {
         const Token op = previous();
         return std::make_unique<ast::Unary>(op.lexeme, unary(), op.line);
     }
@@ -197,8 +259,21 @@ ast::ExprPtr Parser::unary() {
 ast::ExprPtr Parser::call() {
     auto expr = primary();
 
-    while (match({TokenType::LeftParen})) {
-        expr = finishCall(std::move(expr), previous().line);
+    while (true) {
+        if (match({TokenType::LeftParen})) {
+            expr = finishCall(std::move(expr), previous().line);
+            continue;
+        }
+
+        if (match({TokenType::LeftBracket})) {
+            const Token bracket = previous();
+            auto index = expression();
+            consume(TokenType::RightBracket, "Expected ']' after index expression.");
+            expr = std::make_unique<ast::IndexAccess>(std::move(expr), std::move(index), bracket.line);
+            continue;
+        }
+
+        break;
     }
 
     return expr;
@@ -234,6 +309,17 @@ ast::ExprPtr Parser::primary() {
     }
     if (match({TokenType::Identifier})) {
         return std::make_unique<ast::Variable>(previous().lexeme, previous().line);
+    }
+    if (match({TokenType::LeftBracket})) {
+        const Token bracket = previous();
+        std::vector<ast::ExprPtr> elements;
+        if (!check(TokenType::RightBracket)) {
+            do {
+                elements.push_back(expression());
+            } while (match({TokenType::Comma}));
+        }
+        consume(TokenType::RightBracket, "Expected ']' after list literal.");
+        return std::make_unique<ast::ListLiteral>(std::move(elements), bracket.line);
     }
     if (match({TokenType::LeftParen})) {
         const Token opening = previous();

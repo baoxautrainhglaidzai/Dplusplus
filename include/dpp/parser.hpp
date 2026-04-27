@@ -17,16 +17,21 @@ public:
 private:
     ast::StmtPtr statement();
     ast::StmtPtr varDeclaration();
-    ast::StmtPtr assignment();
     ast::StmtPtr functionDeclaration();
     ast::StmtPtr ifStatement();
+    ast::StmtPtr whileStatement();
     ast::StmtPtr forStatement();
+    ast::StmtPtr breakStatement();
+    ast::StmtPtr continueStatement();
     ast::StmtPtr returnStatement();
     ast::StmtPtr printStatement();
     ast::StmtPtr expressionStatement();
     std::vector<ast::StmtPtr> block();
 
     ast::ExprPtr expression();
+    ast::ExprPtr assignment();
+    ast::ExprPtr logicalOr();
+    ast::ExprPtr logicalAnd();
     ast::ExprPtr equality();
     ast::ExprPtr comparison();
     ast::ExprPtr term();

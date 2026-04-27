@@ -54,11 +54,14 @@ private:
     void installBuiltins();
     void executeStatement(const ast::Stmt& statement);
     void executeForStatement(const ast::ForStatement& statement);
+    void executeWhileStatement(const ast::WhileStatement& statement);
     Value evaluate(const ast::Expr& expression);
     Value evaluateBinary(const ast::Binary& expression);
+    Value evaluateLogical(const ast::Logical& expression);
     Value evaluateCall(const ast::Call& expression);
     double requireNumber(const Value& value, int line) const;
     int requireInteger(const Value& value, int line) const;
+    ListPtr requireList(const Value& value, int line) const;
     bool isTruthy(const Value& value) const;
     bool isNumber(const Value& value) const;
 

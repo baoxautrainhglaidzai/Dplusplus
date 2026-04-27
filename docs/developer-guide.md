@@ -141,7 +141,7 @@ Notes:
 
 ### Loops
 
-D++ currently supports `for` loops over inclusive numeric ranges.
+D++ supports `for` loops over inclusive numeric ranges and `while` loops.
 
 ```dpp
 for i in 0..5 {
@@ -157,11 +157,33 @@ for i in 3..1 {
 }
 ```
 
+```dpp
+let i = 0
+
+while i < 3 {
+    print i
+    i = i + 1
+}
+```
+
+Loop control is available:
+
+```dpp
+for i in 0..10 {
+    if i == 2 {
+        continue
+    }
+    if i == 5 {
+        break
+    }
+    print i
+}
+```
+
 Notes:
 
 - Both ends of the range are included.
 - Loop bounds must evaluate to integers.
-- There is no `while`, `break`, or `continue` yet.
 
 ### Print
 
@@ -182,6 +204,7 @@ Current runtime values:
 - `number`
 - `bool`
 - `string`
+- `list`
 - `null`
 - function values
 
@@ -228,6 +251,16 @@ Use `null` for an empty value.
 let current = null
 ```
 
+### List
+
+Lists are mutable and hold mixed value types.
+
+```dpp
+let data = [1, "tea", true]
+print data[0]
+data[0] = 42
+```
+
 ### Truthiness
 
 D++ treats values as truthy or falsy in `if` conditions.
@@ -236,8 +269,10 @@ D++ treats values as truthy or falsy in `if` conditions.
 - `false` is false.
 - numeric `0` is false.
 - empty string `""` is false.
+- empty list `[]` is false.
 - non-zero numbers are true.
 - non-empty strings are true.
+- non-empty lists are true.
 - functions are true.
 
 ## Operators
@@ -248,6 +283,10 @@ Supported operators:
 - `-`
 - `*`
 - `/`
+- `%`
+- `!`
+- `&&`
+- `||`
 - `==`
 - `!=`
 - `>`
@@ -260,7 +299,9 @@ Behavior:
 - `+` adds numbers.
 - `+` concatenates strings.
 - `+` also concatenates mixed values by stringifying them.
-- `-`, `*`, `/` require numbers.
+- `-`, `*`, `/`, `%` require numbers.
+- `!` negates truthiness.
+- `&&` / `||` and `and` / `or` short-circuit.
 - comparison operators require numbers.
 - equality compares values by type and value.
 
@@ -271,6 +312,8 @@ print 1 + 2
 print "Tea " + "Party"
 print "Joy: " + 5
 print 10 > 3
+print !false
+print true && false
 ```
 
 ## Built-in Functions
@@ -301,6 +344,35 @@ Returns a floating-point value between `0.0` and `1.0`.
 
 ```dpp
 print random()
+```
+
+### `len(value)`
+
+Returns the size of a string or list.
+
+```dpp
+print len("abc")
+print len([1, 2, 3])
+```
+
+### `push(list, value)`
+
+Appends a value to a list and returns the new size.
+
+```dpp
+let items = [1]
+print push(items, 2)
+print items
+```
+
+### `pop(list)`
+
+Removes and returns the last element from a list.
+
+```dpp
+let items = [1, 2, 3]
+print pop(items)
+print items
 ```
 
 ## Error Handling
@@ -440,10 +512,8 @@ Guidelines for extensions:
 Current limitations:
 
 - No modules or imports.
-- No arrays, maps, or objects.
+- No maps or objects.
 - No user-defined classes.
-- No `while`, `break`, or `continue`.
-- No logical operators like `and` or `or`.
 - No exception handling.
 - No static typing.
 - No bytecode compiler or VM.
@@ -457,6 +527,7 @@ Sample programs:
 
 - [`examples/moonlit_tea_party.dpp`](../examples/moonlit_tea_party.dpp)
 - [`examples/treasure_cave.dpp`](../examples/treasure_cave.dpp)
+- [`examples/systems_demo.dpp`](../examples/systems_demo.dpp)
 
 ## Testing
 
@@ -474,7 +545,10 @@ The test suite covers:
 - variables and assignment
 - functions and returns
 - conditionals
-- inclusive ascending and descending loops
+- inclusive ascending and descending `for` loops
+- `while` loops with `break` / `continue`
+- logical operators and short-circuit behavior
+- lists, indexing, and list built-ins
 - built-ins
 - runtime errors
 - example program execution
@@ -483,9 +557,7 @@ The test suite covers:
 
 If you want to keep evolving D++, the most natural next features are:
 
-- `while` loops
-- `break` and `continue`
-- lists or arrays
+- maps/dictionaries
 - modules/imports
 - a small REPL
 - a bytecode backend

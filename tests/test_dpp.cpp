@@ -192,6 +192,121 @@ void testMoonlitTeaPartyExample() {
         "moonlit tea party example");
 }
 
+void testSystemsDemoExample() {
+    expectEqual(
+        runProgram(readFile("examples/systems_demo.dpp")),
+        "=== Systems Demo ===\n"
+        "Odd values: [7, 9, 15]\n"
+        "Count: 3\n"
+        "Last odd: 15\n"
+        "After pop: [7, 9]",
+        "systems demo example");
+}
+
+void testWhileBreakContinueAndModulo() {
+    expectEqual(
+        runProgram(R"(
+            let i = 0
+            let sum = 0
+
+            while i < 10 {
+                i = i + 1
+
+                if i % 2 == 0 {
+                    continue
+                }
+
+                if i > 7 {
+                    break
+                }
+
+                sum = sum + i
+            }
+
+            print sum
+        )"),
+        "16",
+        "while loop with break/continue and modulo");
+}
+
+void testListsAndIndexAssignments() {
+    expectEqual(
+        runProgram(R"(
+            let data = [10, 20, 30]
+            data[1] = 99
+            push(data, 7)
+            print data[0]
+            print data[1]
+            print data[3]
+            print len(data)
+            print pop(data)
+            print len(data)
+            print "abc"[1]
+        )"),
+        "10\n99\n7\n4\n7\n3\nb",
+        "lists, indexing, and list builtins");
+}
+
+void testLogicalOperatorsShortCircuit() {
+    expectEqual(
+        runProgram(R"(
+            let hit = 0
+
+            fn mark() {
+                hit = hit + 1
+                return true
+            }
+
+            if true || mark() {
+                print "or"
+            }
+
+            if false && mark() {
+                print "and"
+            } else {
+                print "skip"
+            }
+
+            if !false and true {
+                print "ok"
+            }
+
+            print hit
+        )"),
+        "or\nskip\nok\n0",
+        "logical operators and short-circuit");
+}
+
+void testBreakOutsideLoopError() {
+    expectThrows(
+        []() {
+            static_cast<void>(runProgram("break"));
+        },
+        "Error: 'break' can only be used inside a loop",
+        "break outside loop error");
+}
+
+void testContinueOutsideLoopError() {
+    expectThrows(
+        []() {
+            static_cast<void>(runProgram("continue"));
+        },
+        "Error: 'continue' can only be used inside a loop",
+        "continue outside loop error");
+}
+
+void testIndexOutOfBoundsError() {
+    expectThrows(
+        []() {
+            static_cast<void>(runProgram(R"(
+                let data = [1, 2]
+                print data[3]
+            )"));
+        },
+        "Error: Index out of bounds at line 3",
+        "index bounds error");
+}
+
 }  // namespace
 
 int main() {
@@ -205,6 +320,13 @@ int main() {
         testUndefinedVariableError();
         testReturnOutsideFunction();
         testMoonlitTeaPartyExample();
+        testSystemsDemoExample();
+        testWhileBreakContinueAndModulo();
+        testListsAndIndexAssignments();
+        testLogicalOperatorsShortCircuit();
+        testBreakOutsideLoopError();
+        testContinueOutsideLoopError();
+        testIndexOutOfBoundsError();
     } catch (const Failure& failure) {
         std::cerr << failure.what() << '\n';
         return 1;

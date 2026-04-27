@@ -1,0 +1,25 @@
+print "=== Systems Demo ==="
+
+let values = [4, 7, 9, 12, 15, 18]
+let odds = []
+let i = 0
+
+while i < len(values) {
+    let current = values[i]
+    i = i + 1
+
+    if current % 2 == 0 {
+        continue
+    }
+
+    if current > 15 {
+        break
+    }
+
+    push(odds, current)
+}
+
+print "Odd values: " + odds
+print "Count: " + len(odds)
+print "Last odd: " + pop(odds)
+print "After pop: " + odds

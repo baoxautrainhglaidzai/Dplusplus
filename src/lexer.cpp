@@ -18,8 +18,13 @@ const std::unordered_map<std::string, TokenType> kKeywords = {
     {"return", TokenType::Return},
     {"if", TokenType::If},
     {"else", TokenType::Else},
+    {"while", TokenType::While},
     {"for", TokenType::For},
     {"in", TokenType::In},
+    {"break", TokenType::Break},
+    {"continue", TokenType::Continue},
+    {"and", TokenType::And},
+    {"or", TokenType::Or},
     {"print", TokenType::Print},
     {"true", TokenType::True},
     {"false", TokenType::False},
@@ -58,6 +63,12 @@ void Lexer::scanToken() {
         case '}':
             addToken(TokenType::RightBrace);
             return;
+        case '[':
+            addToken(TokenType::LeftBracket);
+            return;
+        case ']':
+            addToken(TokenType::RightBracket);
+            return;
         case ',':
             addToken(TokenType::Comma);
             return;
@@ -79,6 +90,9 @@ void Lexer::scanToken() {
                 addToken(TokenType::Slash);
             }
             return;
+        case '%':
+            addToken(TokenType::Percent);
+            return;
         case '=':
             addToken(match('=') ? TokenType::EqualEqual : TokenType::Assign);
             return;
@@ -87,7 +101,20 @@ void Lexer::scanToken() {
                 addToken(TokenType::BangEqual);
                 return;
             }
-            error("Unexpected character '!'.");
+            addToken(TokenType::Bang);
+            return;
+        case '&':
+            if (match('&')) {
+                addToken(TokenType::And);
+                return;
+            }
+            error("Unexpected character '&'.");
+        case '|':
+            if (match('|')) {
+                addToken(TokenType::Or);
+                return;
+            }
+            error("Unexpected character '|'.");
         case '>':
             addToken(match('=') ? TokenType::GreaterEqual : TokenType::Greater);
             return;

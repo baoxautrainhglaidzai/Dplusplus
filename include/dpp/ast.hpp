@@ -68,12 +68,59 @@ struct Binary final : Expr {
     ExprPtr right;
 };
 
+struct Logical final : Expr {
+    Logical(ExprPtr logical_left, std::string operator_lexeme, ExprPtr logical_right, int line_number)
+        : Expr(line_number),
+          left(std::move(logical_left)),
+          operator_symbol(std::move(operator_lexeme)),
+          right(std::move(logical_right)) {}
+
+    ExprPtr left;
+    std::string operator_symbol;
+    ExprPtr right;
+};
+
 struct Call final : Expr {
     Call(ExprPtr call_target, std::vector<ExprPtr> call_arguments, int line_number)
         : Expr(line_number), callee(std::move(call_target)), arguments(std::move(call_arguments)) {}
 
     ExprPtr callee;
     std::vector<ExprPtr> arguments;
+};
+
+struct ListLiteral final : Expr {
+    ListLiteral(std::vector<ExprPtr> list_elements, int line_number)
+        : Expr(line_number), elements(std::move(list_elements)) {}
+
+    std::vector<ExprPtr> elements;
+};
+
+struct IndexAccess final : Expr {
+    IndexAccess(ExprPtr access_target, ExprPtr access_index, int line_number)
+        : Expr(line_number), target(std::move(access_target)), index(std::move(access_index)) {}
+
+    ExprPtr target;
+    ExprPtr index;
+};
+
+struct AssignExpression final : Expr {
+    AssignExpression(std::string variable_name, ExprPtr assigned_value, int line_number)
+        : Expr(line_number), name(std::move(variable_name)), value(std::move(assigned_value)) {}
+
+    std::string name;
+    ExprPtr value;
+};
+
+struct IndexAssignExpression final : Expr {
+    IndexAssignExpression(ExprPtr assign_target, ExprPtr assign_index, ExprPtr assigned_value, int line_number)
+        : Expr(line_number),
+          target(std::move(assign_target)),
+          index(std::move(assign_index)),
+          value(std::move(assigned_value)) {}
+
+    ExprPtr target;
+    ExprPtr index;
+    ExprPtr value;
 };
 
 struct VarDeclaration final : Stmt {
@@ -127,6 +174,14 @@ struct IfStatement final : Stmt {
     std::optional<std::vector<StmtPtr>> else_branch;
 };
 
+struct WhileStatement final : Stmt {
+    WhileStatement(ExprPtr condition_expr, std::vector<StmtPtr> loop_body, int line_number)
+        : Stmt(line_number), condition(std::move(condition_expr)), body(std::move(loop_body)) {}
+
+    ExprPtr condition;
+    std::vector<StmtPtr> body;
+};
+
 struct ForStatement final : Stmt {
     ForStatement(std::string iterator_name, ExprPtr range_start, ExprPtr range_end, std::vector<StmtPtr> loop_body, int line_number)
         : Stmt(line_number),
@@ -139,6 +194,14 @@ struct ForStatement final : Stmt {
     ExprPtr start;
     ExprPtr end;
     std::vector<StmtPtr> body;
+};
+
+struct BreakStatement final : Stmt {
+    explicit BreakStatement(int line_number) : Stmt(line_number) {}
+};
+
+struct ContinueStatement final : Stmt {
+    explicit ContinueStatement(int line_number) : Stmt(line_number) {}
 };
 
 struct ExpressionStatement final : Stmt {
